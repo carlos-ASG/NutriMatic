@@ -1,9 +1,19 @@
-from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.orm import declarative_base
+from pydantic import BaseModel, Field
+from typing import Dict, Any
 
-Base = declarative_base()
+class PacienteNutriologo(BaseModel):
+    paciente_id: int = Field(..., description="ID del paciente, parte de la clave primaria compuesta")
+    nutriologo_id: int = Field(..., description="ID del nutriólogo, parte de la clave primaria compuesta")
 
-class PacienteNutriologo(Base):
-    __tablename__ = "paciente_nutriologo"
-    paciente_id = Column(Integer, ForeignKey("pacientes.paciente_id"), primary_key=True)
-    nutriologo_id = Column(Integer, ForeignKey("nutriologo.nutriologo_id"), primary_key=True)
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "PacienteNutriologo":
+        """
+        Crea una instancia de PacienteNutriologo a partir de un diccionario.
+        """
+        return cls(**data)
+
+    class Config:
+        orm_mode = True
+        # No hay enums en este modelo específico, pero use_enum_values
+        # se puede mantener por consistencia si se desea.
+        # use_enum_values = True

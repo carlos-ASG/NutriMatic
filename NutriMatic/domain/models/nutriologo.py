@@ -1,11 +1,19 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any
 
-Base = declarative_base()
+class Nutriologo(BaseModel):
+    nutriologo_id: Optional[int] = Field(None, description="ID único del nutriólogo")
+    nombre: str = Field(..., max_length=100, description="Nombre del nutriólogo")
+    apellido: str = Field(..., max_length=100, description="Apellido del nutriólogo")
+    celular: Optional[str] = Field(None, max_length=20, description="Número de celular del nutriólogo")
 
-class Nutriologo(Base):
-    __tablename__ = "nutriologo"
-    nutriologo_id = Column(Integer, primary_key=True)
-    nombre = Column(String(100), nullable=False)
-    apellido = Column(String(100), nullable=False)
-    celular = Column(String(20))
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Nutriologo":
+        """
+        Crea una instancia de Nutriologo a partir de un diccionario.
+        """
+        return cls(**data)
+
+    class Config:
+        orm_mode = True
+        use_enum_values = True # Aunque no hay enums aquí, es bueno para consistencia

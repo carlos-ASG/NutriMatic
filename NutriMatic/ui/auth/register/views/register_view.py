@@ -1,23 +1,25 @@
 import reflex as rx
+from NutriMatic.ui.auth.register.states.register_state import RegisterState
+from NutriMatic.ui.auth.register.states.register_state import RegisterState
 
-def login_view() -> rx.Component:
+def register_view() -> rx.Component:
     return rx.vstack(  # Contenedor principal para centrar
         rx.card(
             rx.vstack(
                 rx.flex(
                     rx.heading(
-                        "Sign in to your account",
+                        "Register your account",
                         size="6",
                         as_="h2",
                         width="100%",
                     ),
                     rx.hstack(
                         rx.text(
-                            "New here?",
+                            "Already have an account?",
                             size="3",
                             text_align="left",
                         ),
-                        rx.link("Sign up", href="/register", size="3"),
+                        rx.link("Log in", href="/login", size="3"),  # Cambiado a "Log in"
                         spacing="2",
                         opacity="0.8",
                         width="100%",
@@ -36,72 +38,47 @@ def login_view() -> rx.Component:
                         width="100%",
                     ),
                     rx.input(
-                        rx.input.slot(rx.icon("user")),
                         placeholder="user@reflex.dev",
                         type="email",
                         size="3",
                         width="100%",
+                        on_change=RegisterState.set_email,
                     ),
                     spacing="2",
                     justify="start",
                     width="100%",
                 ),
                 rx.vstack(
-                    rx.hstack(
-                        rx.text(
-                            "Password",
-                            size="3",
-                            weight="medium",
-                        ),
-                        rx.link(
-                            "Forgot password?",
-                            href="#",
-                            size="3",
-                        ),
-                        justify="between",
+                    rx.text(
+                        "Password",
+                        size="3",
+                        weight="medium",
+                        text_align="left",
                         width="100%",
                     ),
                     rx.input(
-                        rx.input.slot(rx.icon("lock")),
                         placeholder="Enter your password",
                         type="password",
                         size="3",
                         width="100%",
+                        on_change=RegisterState.set_password,
+                    ),
+                    rx.input(
+                        placeholder="Confirm your password",
+                        type="password",
+                        size="3",
+                        width="100%",
+                        on_change=RegisterState.set_confirm_password,
                     ),
                     spacing="2",
                     width="100%",
                 ),
-                rx.button("Sign in", size="3", width="100%"),
-                rx.hstack(
-                    rx.divider(margin="0"),
-                    rx.text(
-                        "Or continue with",
-                        white_space="nowrap",
-                        weight="medium",
-                    ),
-                    rx.divider(margin="0"),
-                    align="center",
+                rx.text(RegisterState.error_message, color="red", size="3"),
+                rx.button(
+                    "Sign up",
+                    size="3",
                     width="100%",
-                ),
-                rx.center(
-                    rx.icon_button(
-                        rx.icon(tag="github"),
-                        variant="soft",
-                        size="3",
-                    ),
-                    rx.icon_button(
-                        rx.icon(tag="facebook"),
-                        variant="soft",
-                        size="3",
-                    ),
-                    rx.icon_button(
-                        rx.icon(tag="twitter"),
-                        variant="soft",
-                        size="3",
-                    ),
-                    spacing="4",
-                    direction="row",
-                    width="100%",
+                    on_click=RegisterState.register,
                 ),
                 spacing="6",
                 width="100%",
