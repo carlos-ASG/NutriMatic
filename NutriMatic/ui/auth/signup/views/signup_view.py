@@ -1,12 +1,12 @@
 import reflex as rx
 
-def login_view() -> rx.Component:
+def signup_view() -> rx.Component:
     return rx.vstack(  # Contenedor principal para centrar
         rx.card(
             rx.vstack(
                 rx.flex(
                     rx.heading(
-                        "Inicio de sesión",
+                        "Registro de sesión",
                         size="6",
                         as_="h2",
                         width="100%",
@@ -15,11 +15,11 @@ def login_view() -> rx.Component:
                     ),
                     rx.hstack(
                         rx.text(
-                            "No tienes una cuenta?",
+                            "Ya tienes una cuenta?",
                             size="3",
                             text_align="left",
                         ),
-                        rx.link("Registro de sesión", href='/signup', size="3"),
+                        rx.link("Inicio de sesión", href='/login', size="3"),
                         spacing="2",
                         opacity="0.8",
                         width="100%",
@@ -30,6 +30,73 @@ def login_view() -> rx.Component:
                     width="100%",
                 ),
                 rx.vstack(
+                    rx.text(
+                        "Nombres",
+                        size="3",
+                        weight="medium",
+                        text_align="left",
+                        width="100%",
+                    ),
+                    rx.input(
+                        rx.input.slot(rx.icon("user")),
+                        placeholder="Luis Angel",
+                        type="text",
+                        size="3",
+                        width="100%",
+                        required=True,
+                        aria_label="Numero de celular",
+                        aria_required=True,
+                    ),
+                    spacing="2",
+                    justify="start",
+                    width="100%",
+                ), rx.vstack(
+                    rx.text(
+                        "Apellidos",
+                        size="3",
+                        weight="medium",
+                        text_align="left",
+                        width="100%",
+                    ),
+                    rx.input(
+                        rx.input.slot(rx.icon("user")),
+                        placeholder="Rofriguez Cobian",
+                        type="text",
+                        size="3",
+                        width="100%",
+                        required=True,
+                        aria_label="Numero de celular",
+                        aria_required=True,
+                    ),
+                    spacing="2",
+                    justify="start",
+                    width="100%",
+                ),  rx.vstack(
+                    rx.text(
+                        "Numero de celular",
+                        size="3",
+                        weight="medium",
+                        text_align="left",
+                        width="100%",
+                    ),
+                    rx.input(
+                        rx.input.slot(rx.icon("phone")),
+                        placeholder="123-456-7890",
+                        type="number",
+                        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}",
+                        title="Formato: 123-456-7890",
+                        minlength=12,
+                        maxlength=12,
+                        required=True,
+                        aria_label="Numero de celular",
+                        aria_required=True,
+                        size="3",
+                        width="100%",
+                    ),
+                    spacing="2",
+                    justify="start",
+                    width="100%",
+                ),  rx.vstack(
                     rx.hstack(
                         rx.text(
                             "Email",
@@ -77,7 +144,7 @@ def login_view() -> rx.Component:
                     spacing="2",
                     width="100%",
                 ), 
-                rx.button("Sign in", size="3", width="100%"),
+                rx.button("Signup", size="3", width="100%"),
                 rx.hstack(
                     rx.divider(margin="0"),
                     rx.text(
@@ -118,7 +185,7 @@ def login_view() -> rx.Component:
         ),
         align="center",  # Centra horizontalmente
         justify="center",  # Centra verticalmente
-        height="100vh",  # Ocupa toda la altura de la ventana
+        height="145vh",  # Ocupa toda la altura de la ventana
         width="100%", # Ocupa todo el ancho de la ventana
         background="linear-gradient(to bottom, #ade7ab  0%, #40c6dc 100%)"
     )
