@@ -1,26 +1,24 @@
-from dataclasses import dataclass
+from gotrue import AuthResponse
+from supabase import Client
 from NutriMatic.config.supabase_conection import supabase
 
+class AuthRepository:
+    def __init__(self, supabase: Client = supabase):
+        self.supabase = supabase
 
-
-async def sign_up(email: str, password: str, data: any) -> dict:
-    response = supabase.auth.sign_up({
-        "email": email,
-        "password": password,
-        "data": data
-    })
-    return response
-
-async def sign_in(email: str, password: str) -> dict:
-    response = supabase.auth.sign_in_with_password({
-        "email": email,
-        "password": password
+    async def sign_up(self,email: str, password: str) -> AuthResponse:
+        response = self.supabase.auth.sign_up({
+            "email": email,
+            "password": password
         })
-    return response
+        return response
 
-async def logout(self) -> dict:
-    """
-    Log out the current user.
-    """
-    response = supabase.auth.sign_out()
-    return response
+    async def sign_in(self,email: str, password: str) -> AuthResponse:
+        response = self.supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+            })
+        return response
+
+    async def logout(self) -> None:
+        self.supabase.auth.sign_out()
