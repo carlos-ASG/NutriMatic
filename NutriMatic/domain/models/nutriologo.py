@@ -1,11 +1,13 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
+import reflex as rx
+from uuid import UUID
+from sqlmodel import Field
 
-Base = declarative_base()
-
-class Nutriologo(Base):
-    __tablename__ = "nutriologo"
-    nutriologo_id = Column(Integer, primary_key=True)
-    nombre = Column(String(100), nullable=False)
-    apellido = Column(String(100), nullable=False)
-    celular = Column(String(20))
+class Nutriologo(rx.Model, table=True):
+    """
+    Representa el perfil de un nutriólogo en la base de datos.
+    La llave primaria 'nutriologo_id' se corresponde con el id del usuario
+    en la tabla auth.users de Supabase.
+    """
+    nutriologo_id: UUID = Field(primary_key=True)
+    nombre: str
+    apellido: str

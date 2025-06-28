@@ -1,4 +1,5 @@
 import reflex as rx
+from NutriMatic.ui.auth.state.auth_state import AuthState
 
 def signup_view() -> rx.Component:
     return rx.vstack(  # Contenedor principal para centrar
@@ -44,8 +45,9 @@ def signup_view() -> rx.Component:
                         size="3",
                         width="100%",
                         required=True,
-                        aria_label="Numero de celular",
+                        aria_label="Nombres",
                         aria_required=True,
+                        on_change=AuthState.set_nombre,
                     ),
                     spacing="2",
                     justify="start",
@@ -60,38 +62,14 @@ def signup_view() -> rx.Component:
                     ),
                     rx.input(
                         rx.input.slot(rx.icon("user")),
-                        placeholder="Rofriguez Cobian",
+                        placeholder="Rodriguez Cobian",
                         type="text",
                         size="3",
                         width="100%",
                         required=True,
-                        aria_label="Numero de celular",
+                        aria_label="Apellidos",
                         aria_required=True,
-                    ),
-                    spacing="2",
-                    justify="start",
-                    width="100%",
-                ),  rx.vstack(
-                    rx.text(
-                        "Numero de celular",
-                        size="3",
-                        weight="medium",
-                        text_align="left",
-                        width="100%",
-                    ),
-                    rx.input(
-                        rx.input.slot(rx.icon("phone")),
-                        placeholder="123-456-7890",
-                        type="number",
-                        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}",
-                        title="Formato: 123-456-7890",
-                        minlength=12,
-                        maxlength=12,
-                        required=True,
-                        aria_label="Numero de celular",
-                        aria_required=True,
-                        size="3",
-                        width="100%",
+                        on_change=AuthState.set_apellido,
                     ),
                     spacing="2",
                     justify="start",
@@ -115,6 +93,7 @@ def signup_view() -> rx.Component:
                         aria_required=True,
                         size="3",
                         width="100%",
+                        on_change=AuthState.set_email,
                     ),
                     spacing="2",
                     width="100%",
@@ -126,11 +105,6 @@ def signup_view() -> rx.Component:
                             size="3",
                             weight="medium",
                         ),
-                        rx.link(
-                            "Forgot password?",
-                            href="#",
-                            size="3",
-                        ),
                         justify="between",
                         width="100%",
                     ),
@@ -140,11 +114,18 @@ def signup_view() -> rx.Component:
                         type="password",
                         size="3",
                         width="100%",
+                        on_change=AuthState.set_password,
                     ),
                     spacing="2",
                     width="100%",
                 ), 
-                rx.button("Signup", size="3", width="100%"),
+                rx.button(
+                    "Signup", 
+                    size="3", 
+                    width="100%", 
+                    on_click=AuthState.handle_signup, 
+                    loading=AuthState.loading
+                ),
                 rx.hstack(
                     rx.divider(margin="0"),
                     rx.text(
@@ -185,7 +166,7 @@ def signup_view() -> rx.Component:
         ),
         align="center",  # Centra horizontalmente
         justify="center",  # Centra verticalmente
-        height="145vh",  # Ocupa toda la altura de la ventana
+        height="120vh",  # Ajustado para mejor visualización
         width="100%", # Ocupa todo el ancho de la ventana
         background="linear-gradient(to bottom, #ade7ab  0%, #40c6dc 100%)"
     )

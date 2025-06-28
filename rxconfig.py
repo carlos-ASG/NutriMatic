@@ -9,10 +9,10 @@ HOST=os.getenv("host")
 PORT=os.getenv("port")
 DBNAME=os.getenv("dbname")
 
-class CustomConfig(rx.Config):
-    database_url: str
+DB_URL=f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}'
 
-config = CustomConfig(
+config = rx.Config(
     app_name="NutriMatic",
-    database_url=f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+    db_url=DB_URL,
+    tailwind=None
 )

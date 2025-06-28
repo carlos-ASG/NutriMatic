@@ -256,23 +256,23 @@ CREATE TABLE recomendaciones_nutricionales (
     fecha_recomendacion DATE DEFAULT CURRENT_DATE
 );
 
+-- MODIFICADO: La tabla 'nutriologo' usa una PK 'nutriologo_id' para ser más descriptiva.
 CREATE TABLE nutriologo (
-    nutriologo_id SERIAL PRIMARY KEY,
+    nutriologo_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    celular VARCHAR(20)
+    apellido VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE paciente_nutriologo (
     paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
-    nutriologo_id INTEGER REFERENCES nutriologo(nutriologo_id) ON DELETE CASCADE,
+    nutriologo_id UUID REFERENCES nutriologo(nutriologo_id) ON DELETE CASCADE, -- CORREGIDO
     PRIMARY KEY (paciente_id, nutriologo_id)
 );
 
 CREATE TABLE historia_clinica (
     hc_id SERIAL PRIMARY KEY,
     paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
-    nutriologo_id INTEGER REFERENCES nutriologo(nutriologo_id) ON DELETE SET NULL,
+    nutriologo_id UUID REFERENCES nutriologo(nutriologo_id) ON DELETE SET NULL, -- CORREGIDO
     fecha_historia DATE DEFAULT CURRENT_DATE
 );
 
@@ -329,6 +329,9 @@ CREATE TABLE habitos_alimentacion (
     notas_adicionales_habitos TEXT NULL -- Campo general para otras notas
 );
 
+-- ELIMINADO: Esta tabla ya no es necesaria, la autenticación se maneja con auth.users
+-- y el perfil con la tabla 'nutriologo' vinculada;
+/*
 CREATE TABLE login_pacientes (
     login_paciente_id SERIAL PRIMARY KEY,
     paciente_id INTEGER NOT NULL UNIQUE REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
@@ -344,6 +347,7 @@ CREATE TABLE login_nutriologos (
     password_hash VARCHAR(255) NOT NULL,
     verificado BOOLEAN NOT NULL DEFAULT FALSE
 );
+*/
 
 CREATE TABLE catalogo_grupos_alimentos (
     grupo_alimento_id SERIAL PRIMARY KEY,

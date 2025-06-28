@@ -1,6 +1,6 @@
 import reflex as rx
 
-from NutriMatic.ui.auth.auth_state import AuthState
+from NutriMatic.ui.auth.state.auth_state import AuthState
 
 def login_view() -> rx.Component:
     return rx.vstack(  # Contenedor principal para centrar

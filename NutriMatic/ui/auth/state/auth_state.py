@@ -1,8 +1,8 @@
 from gotrue import User
 import reflex as rx
 from NutriMatic.data.respositories.auth_repository import AuthRepository
-from NutriMatic.domain.models.nutriologo import Nutriologo
 from typing import Optional, Dict, Any
+from NutriMatic.domain.models.nutriologo import Nutriologo
 
 # Obtenemos la configuración de rxconfig
 from rxconfig import config
@@ -12,7 +12,9 @@ class AuthState(rx.State):
     # En su lugar, almacena la información del usuario como un diccionario.
     user: Optional[Dict[str, Any]] = None
     
-    # Inputs del formulario de login
+    # Inputs para los formularios
+    nombre: str = ""
+    apellido: str = ""
     email: str = ""
     password: str = ""
     loading: bool = False
@@ -53,10 +55,45 @@ class AuthState(rx.State):
             # por el cliente de Supabase.
             if response.session and response.session.user:
                 self.user = response.session.user.model_dump()
-            return rx.redirect("/nutri-home")
+                return rx.redirect("/nutri-home")
         except Exception as e:
             print(f"Error en login: {e}") # Opcional: manejar errores en la UI
             self.password = ""
+        finally:
+            self.loading = False
+
+    async def handle_signup(self):
+        """
+        Maneja el registro de un nuevo usuario.
+        Si es exitoso, redirige a la página de login sin iniciar sesión.
+        """
+        self.loading = True
+        auth_repo = AuthRepository()
+        try:
+            # 1. Crear una instancia del modelo Nutriologo con los datos del formulario.
+            nutriologo_data = Nutriologo(
+                nombre=self.nombre,
+                apellido=self.apellido
+            )
+
+            # 2. Llamar al método sign_up del repositorio.
+            response = await auth_repo.sign_up(
+                email=self.email,
+                password=self.password,
+                nutriologo=nutriologo_data
+            )
+
+            # 3. Si el usuario se creó (response.user no es None), redirigir a login.
+            # No se guarda la sesión ni el usuario en el estado.
+            if response.user:
+                print("Registro exitoso. Por favor, inicie sesión.")
+                return rx.redirect("/login")
+            # Si response.user es None, la excepción probablemente ya se manejó
+            # o se puede añadir un mensaje de error genérico aquí.
+
+        except Exception as e:
+            # Idealmente, mostrar un error en la UI.
+            print(f"Error en signup: {e}")
         finally:
             self.loading = False
             
