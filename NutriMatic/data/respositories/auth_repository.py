@@ -1,7 +1,7 @@
 from gotrue import AuthResponse
 from supabase import Client
 from NutriMatic.config.supabase_conection import supabase
-from NutriMatic.domain.models.nutriologo import Nutriologo
+from NutriMatic.domain.models.nutriologo.nutriologo import Nutriologo
 import reflex as rx
 from uuid import UUID
 

@@ -2,7 +2,7 @@ from gotrue import User
 import reflex as rx
 from NutriMatic.data.respositories.auth_repository import AuthRepository
 from typing import Optional, Dict, Any
-from NutriMatic.domain.models.nutriologo import Nutriologo
+from NutriMatic.domain.models.nutriologo.nutriologo import Nutriologo
 
 # Obtenemos la configuración de rxconfig
 from rxconfig import config
