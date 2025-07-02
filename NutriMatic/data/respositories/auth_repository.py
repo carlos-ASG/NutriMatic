@@ -34,6 +34,10 @@ class AuthRepository:
 
         return response
 
+    async def get_session(self):
+        """Obtiene la sesión actual del cliente de Supabase."""
+        return self.supabase.auth.get_session()
+
     async def sign_in(self,email: str, password: str) -> AuthResponse:
         response = self.supabase.auth.sign_in_with_password({
             "email": email,

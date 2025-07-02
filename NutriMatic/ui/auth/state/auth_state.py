@@ -10,7 +10,7 @@ from rxconfig import config
 class AuthState(rx.State):
     # No almacenes el objeto de sesión completo, ya que no es serializable.
     # En su lugar, almacena la información del usuario como un diccionario.
-    user: Optional[Dict[str, Any]] = None
+    user: dict | None = None
     
     # Inputs para los formularios
     nombre: str = ""
@@ -18,6 +18,15 @@ class AuthState(rx.State):
     email: str = ""
     password: str = ""
     loading: bool = False
+    error_message: str = ""
+
+    def _clear_fields_and_error(self):
+        """Resets input fields and error message."""
+        self.email = ""
+        self.password = ""
+        self.nombre = ""
+        self.apellido = ""
+        self.error_message = ""
 
     '''def on_load(self):
         """
@@ -42,9 +51,28 @@ class AuthState(rx.State):
         """Verifica si el usuario está autenticado."""
         return self.user is not None
 
+    async def check_auth(self):
+        """
+        Verifica si el usuario está autenticado al cargar una página protegida.
+        Si no hay un usuario en el estado, intenta obtener la sesión.
+        Si no hay sesión, redirige a la página de login.
+        """
+        if not self.is_authenticated:
+            auth_repo = AuthRepository()
+            try:
+                response = await auth_repo.get_session()
+                if response and response.user:
+                    self.user = response.user.model_dump()
+                else:
+                    # La redirección debe ser un evento que se retorna
+                    return rx.redirect("/login")
+            except Exception:
+                return rx.redirect("/login")
+
     async def handle_login(self):
         """Maneja el inicio de sesión."""
         self.loading = True
+        self.error_message = ""  # Clear previous errors
         auth_repo = AuthRepository()  # Instancia el repositorio aquí.
         try:
             response = await auth_repo.sign_in(
@@ -55,8 +83,10 @@ class AuthState(rx.State):
             # por el cliente de Supabase.
             if response.session and response.session.user:
                 self.user = response.session.user.model_dump()
+                self._clear_fields_and_error()
                 return rx.redirect("/nutri-home")
         except Exception as e:
+            self.error_message = "Credenciales inválidas. Por favor, inténtalo de nuevo."
             print(f"Error en login: {e}") # Opcional: manejar errores en la UI
             self.password = ""
         finally:
@@ -68,6 +98,7 @@ class AuthState(rx.State):
         Si es exitoso, redirige a la página de login sin iniciar sesión.
         """
         self.loading = True
+        self.error_message = ""  # Clear previous errors
         auth_repo = AuthRepository()
         try:
             # 1. Crear una instancia del modelo Nutriologo con los datos del formulario.
@@ -87,16 +118,18 @@ class AuthState(rx.State):
             # No se guarda la sesión ni el usuario en el estado.
             if response.user:
                 print("Registro exitoso. Por favor, inicie sesión.")
+                self._clear_fields_and_error()
                 return rx.redirect("/login")
             # Si response.user es None, la excepción probablemente ya se manejó
             # o se puede añadir un mensaje de error genérico aquí.
 
         except Exception as e:
+            self.error_message = "No se pudo completar el registro. Verifica tus datos."
             # Idealmente, mostrar un error en la UI.
             print(f"Error en signup: {e}")
         finally:
             self.loading = False
-            
+        
     async def handle_logout(self):
         """Maneja el cierre de sesión."""
         auth_repo = AuthRepository()  # Instancia el repositorio aquí.

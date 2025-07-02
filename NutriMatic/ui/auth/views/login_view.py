@@ -31,6 +31,16 @@ def login_view() -> rx.Component:
                     spacing="4",
                     width="100%",
                 ),
+                rx.cond(
+                    AuthState.error_message != "",
+                    rx.callout(
+                        AuthState.error_message,
+                        icon="triangle_alert",
+                        color_scheme="red",
+                        role="alert",
+                        width="100%",
+                    )
+                ),
                 rx.vstack(
                     rx.hstack(
                         rx.text(
@@ -50,7 +60,7 @@ def login_view() -> rx.Component:
                         aria_required=True,
                         size="3",
                         width="100%",
-                        on_change=AuthState.set_email
+                        on_change=AuthState.set_email # type: ignore
                     ),
                     spacing="2",
                     width="100%",
@@ -76,12 +86,12 @@ def login_view() -> rx.Component:
                         type="password",
                         size="3",
                         width="100%",
-                        on_change=AuthState.set_password
+                        on_change=AuthState.set_password # type: ignore
                     ),
                     spacing="2",
                     width="100%",
                 ), 
-                rx.button("Sign in", size="3", width="100%", on_click=AuthState.handle_login, loading=AuthState.loading),
+                rx.button("Sign in", size="3", width="100%", on_click=AuthState.handle_login, loading=AuthState.loading), # type: ignore
                 rx.hstack(
                     rx.divider(margin="0"),
                     rx.text(

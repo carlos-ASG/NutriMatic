@@ -30,6 +30,16 @@ def signup_view() -> rx.Component:
                     spacing="4",
                     width="100%",
                 ),
+                rx.cond(
+                    AuthState.error_message != "",
+                    rx.callout(
+                        AuthState.error_message,
+                        icon="triangle_alert",
+                        color_scheme="red",
+                        role="alert",
+                        width="100%",
+                    )
+                ),
                 rx.vstack(
                     rx.text(
                         "Nombres",
@@ -47,7 +57,7 @@ def signup_view() -> rx.Component:
                         required=True,
                         aria_label="Nombres",
                         aria_required=True,
-                        on_change=AuthState.set_nombre,
+                        on_change=AuthState.set_nombre, # type: ignore
                     ),
                     spacing="2",
                     justify="start",
@@ -69,7 +79,7 @@ def signup_view() -> rx.Component:
                         required=True,
                         aria_label="Apellidos",
                         aria_required=True,
-                        on_change=AuthState.set_apellido,
+                        on_change=AuthState.set_apellido, # type: ignore
                     ),
                     spacing="2",
                     justify="start",
@@ -93,7 +103,7 @@ def signup_view() -> rx.Component:
                         aria_required=True,
                         size="3",
                         width="100%",
-                        on_change=AuthState.set_email,
+                        on_change=AuthState.set_email, # type: ignore
                     ),
                     spacing="2",
                     width="100%",
@@ -114,7 +124,7 @@ def signup_view() -> rx.Component:
                         type="password",
                         size="3",
                         width="100%",
-                        on_change=AuthState.set_password,
+                        on_change=AuthState.set_password, # type: ignore
                     ),
                     spacing="2",
                     width="100%",
@@ -123,7 +133,7 @@ def signup_view() -> rx.Component:
                     "Signup", 
                     size="3", 
                     width="100%", 
-                    on_click=AuthState.handle_signup, 
+                    on_click=AuthState.handle_signup,  # type: ignore
                     loading=AuthState.loading
                 ),
                 rx.hstack(
