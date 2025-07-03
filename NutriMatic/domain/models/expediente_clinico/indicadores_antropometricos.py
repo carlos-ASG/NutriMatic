@@ -25,3 +25,4 @@ class IndicadoresAntropometricos(rx.Model, table=True):
     diametro_femur: Optional[float] = None
     circ_antebrazo: Optional[float] = None
     objetivo: Optional[str] = None  # tipo_objetivo ENUM en la BD
+    fecha_medicion: Optional[str] = Field(default=None)  # Fecha de la medición en formato 'YYYY-MM-DD'

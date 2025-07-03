@@ -18,3 +18,4 @@ class Paciente(rx.Model, table=True):
     direccion: Optional[str] = None
     nivel_educativo: Optional[str] = None
     fecha_creacion: Optional[date] = Field(default_factory=date.today)
+    fecha_actualizacion: Optional[date] = Field(default_factory=date.today)

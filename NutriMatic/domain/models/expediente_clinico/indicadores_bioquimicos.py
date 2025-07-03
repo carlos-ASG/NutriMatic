@@ -12,4 +12,4 @@ class IndicadorBioquimico(rx.Model, table=True):
     paciente_id: Optional[int] = Field(default=None, foreign_key="pacientes.paciente_id")
     nombre_indicador: Optional[str] = None
     valor: Optional[str] = None
-    #fecha_medicion: Optional[date] = Field(default_factory=date.today)
+    fecha_medicion: Optional[date] = Field(default_factory=date.today)
