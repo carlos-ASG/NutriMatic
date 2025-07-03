@@ -1,5 +1,6 @@
 import reflex as rx
 from NutriMatic.ui.components.header import header
+from NutriMatic.ui.expediente_clinico.components.ficha_identificacion import ficha_identificacion
 
 def expediente_clinico_view() -> rx.Component:
     """Vista para el expediente clínico del paciente."""
@@ -16,6 +17,19 @@ def expediente_clinico_view() -> rx.Component:
                     align="center",
                     width="100%",
                 ),
+                # --- Sección de Ficha de Identificación ---
+                rx.box(
+                    rx.container(
+                        ficha_identificacion(),
+                        width="100%",
+                        padding="1rem",
+                        background_color="#f8f9fa",
+                        border_radius="8px",
+                        box_shadow="0 1px 2px rgba(0,0,0,0.05)",
+                    ),
+                ),
+                    
+                
             ),
             # --- ESTILOS DEL CONTENEDOR PRINCIPAL (LA TARJETA BLANCA) ---
             background_color="white",
