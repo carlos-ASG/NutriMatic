@@ -71,3 +71,14 @@ def form_section(title: str, date: str, children: list[rx.Component]) -> rx.Comp
         border_radius="8px",
         box_shadow="0 1px 2px rgba(0,0,0,0.05)",
     )
+
+def fecha_input(on_change: callable, value: rx.Var) -> rx.Component:
+    return rx.input(
+        type_="date",
+        placeholder="Fecha de nacimient",
+        style={"width": "100%"},
+        required=True,
+        on_change=on_change,
+        value=value
+    )
+# This component creates a date input field for the patient's date of birth.
