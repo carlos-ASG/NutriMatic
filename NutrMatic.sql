@@ -88,9 +88,10 @@ CREATE TYPE tipo_hora_apetito AS ENUM (
 
 -- Tablas
 
-CREATE TABLE pacientes (
-    paciente_id SERIAL PRIMARY KEY,
-    nombre_completo VARCHAR(100) NOT NULL,
+-- Tabla de Pacientes
+CREATE TABLE paciente (
+    paciente_id UUID PRIMARY KEY, -- Proviene de Supabase Auth
+    nombre_completo VARCHAR(255) NOT NULL,
     fecha_nacimiento DATE,
     genero tipo_genero,
     estado_civil tipo_estado_civil,
@@ -98,7 +99,8 @@ CREATE TABLE pacientes (
     telefono VARCHAR(15),
     direccion VARCHAR(200),
     nivel_educativo VARCHAR(50),
-    fecha_creacion DATE DEFAULT CURRENT_DATE
+    fecha_creacion DATE DEFAULT CURRENT_DATE,
+    fecha_actualizacion DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE catalogo_condiciones_medicas (
@@ -115,7 +117,7 @@ CREATE TABLE catalogo_parentescos (
 
 CREATE TABLE paciente_antecedentes_familiares (
     pac_ant_fam_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER NOT NULL REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID NOT NULL REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     condicion_id INTEGER NOT NULL REFERENCES catalogo_condiciones_medicas(condicion_id) ON DELETE RESTRICT,
     parentesco_id INTEGER NOT NULL REFERENCES catalogo_parentescos(parentesco_id) ON DELETE RESTRICT,
     comentarios TEXT NULL,
@@ -125,7 +127,7 @@ CREATE TABLE paciente_antecedentes_familiares (
 
 CREATE TABLE antecedentes_no_patologicos (
     anp_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     tipo_vivienda tipo_vivienda_enum,
     tiene_agua BOOLEAN,
     abuso_sustancias TEXT,
@@ -137,7 +139,7 @@ CREATE TABLE antecedentes_no_patologicos (
 
 CREATE TABLE antecedentes_gineco_obstetricos (
     ago_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     embarazos INTEGER,
     partos INTEGER,
     ultima_menstruacion DATE,
@@ -156,14 +158,15 @@ CREATE TABLE catalogo_patologias (
 );
 
 CREATE TABLE paciente_patologias_asignadas (
-    paciente_id INTEGER NOT NULL REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID NOT NULL REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     patologia_id INTEGER NOT NULL REFERENCES catalogo_patologias(patologia_id) ON DELETE RESTRICT,
     PRIMARY KEY (paciente_id, patologia_id)
 );
 
-CREATE TABLE antecedentes_patologicos (
+-- Tabla de Antecedentes Patológicos
+CREATE TABLE antecedente_personal_patologico (
     app_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     cirugias_fracturas TEXT,
     medicamentos_actuales TEXT,
     transfusiones BOOLEAN
@@ -171,7 +174,7 @@ CREATE TABLE antecedentes_patologicos (
 
 CREATE TABLE sintomas_sistemas (
     ss_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     digestivo TEXT,
     cardiovascular TEXT,
     tegumentario TEXT,
@@ -182,7 +185,7 @@ CREATE TABLE sintomas_sistemas (
 
 CREATE TABLE signos_vitales (
     sv_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     frecuencia_cardiaca INTEGER,
     frecuencia_respiratoria INTEGER,
     presion_sistolica INTEGER,
@@ -193,7 +196,7 @@ CREATE TABLE signos_vitales (
 
 CREATE TABLE exploracion_fisica (
     ef_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     fecha_exploracion TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     aspecto_general VARCHAR(50),
     ojos VARCHAR(50),
@@ -215,7 +218,7 @@ CREATE TABLE exploracion_fisica (
 
 CREATE TABLE mediciones_antropometricas (
     ma_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     peso_actual DECIMAL(5,2),
     peso_habitual DECIMAL(5,2),
     talla DECIMAL(3,2),
@@ -236,7 +239,7 @@ CREATE TABLE mediciones_antropometricas (
 
 CREATE TABLE indicadores_bioquimicos (
     ib_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     nombre_indicador VARCHAR(50),
     valor TEXT,
     fecha_medicion DATE DEFAULT CURRENT_DATE
@@ -244,19 +247,18 @@ CREATE TABLE indicadores_bioquimicos (
 
 CREATE TABLE diagnostico_nutricional (
     dn_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     diagnostico TEXT,
     fecha_diagnostico DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE recomendaciones_nutricionales (
     rn_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     recomendacion TEXT,
     fecha_recomendacion DATE DEFAULT CURRENT_DATE
 );
 
--- MODIFICADO: La tabla 'nutriologo' usa una PK 'nutriologo_id' para ser más descriptiva.
 CREATE TABLE nutriologo (
     nutriologo_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     nombre VARCHAR(100) NOT NULL,
@@ -264,28 +266,28 @@ CREATE TABLE nutriologo (
 );
 
 CREATE TABLE paciente_nutriologo (
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
-    nutriologo_id UUID REFERENCES nutriologo(nutriologo_id) ON DELETE CASCADE, -- CORREGIDO
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
+    nutriologo_id UUID REFERENCES nutriologo(nutriologo_id) ON DELETE CASCADE,
     PRIMARY KEY (paciente_id, nutriologo_id)
 );
 
 CREATE TABLE historia_clinica (
     hc_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
-    nutriologo_id UUID REFERENCES nutriologo(nutriologo_id) ON DELETE SET NULL, -- CORREGIDO
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
+    nutriologo_id UUID REFERENCES nutriologo(nutriologo_id) ON DELETE SET NULL,
     fecha_historia DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE frecuencia_alimentaria (
     fa_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     grupo_alimento tipo_grupo_alimento,
     frecuencia tipo_frecuencia_consumo
 );
 
 CREATE TABLE recordatorio_24 (
     recordatorio_24_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     fecha_recordatorio DATE DEFAULT CURRENT_DATE,
     desayuno TEXT,
     colaciones TEXT,
@@ -307,13 +309,12 @@ CREATE TABLE recordatorio_24 (
     kcal_totales DECIMAL(10,2)
 );
 
--- Tabla habitos_alimentacion (MODIFICADA)
 CREATE TABLE habitos_alimentacion (
     ha_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
+    paciente_id UUID REFERENCES paciente(paciente_id) ON DELETE CASCADE,
     num_comidas_casa_semana INTEGER NULL,
     num_comidas_fuera_semana INTEGER NULL,
-    quien_prepara_alimentos_predominante VARCHAR(100) NULL, -- Podría ser un ENUM si la lista es fija
+    quien_prepara_alimentos_predominante VARCHAR(100) NULL,
     hora_mayor_apetito tipo_hora_apetito,
     apetito tipo_apetito,
     suplementos_descripcion TEXT NULL,
@@ -326,62 +327,7 @@ CREATE TABLE habitos_alimentacion (
     alimentos_preferidos TEXT,
     alimentos_disgustan TEXT,
     consumo_agua_vasos_dia INTEGER NULL,
-    notas_adicionales_habitos TEXT NULL -- Campo general para otras notas
-);
-
--- ELIMINADO: Esta tabla ya no es necesaria, la autenticación se maneja con auth.users
--- y el perfil con la tabla 'nutriologo' vinculada;
-/*
-CREATE TABLE login_pacientes (
-    login_paciente_id SERIAL PRIMARY KEY,
-    paciente_id INTEGER NOT NULL UNIQUE REFERENCES pacientes(paciente_id) ON DELETE CASCADE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    verificado BOOLEAN NOT NULL DEFAULT FALSE
-);
-
-CREATE TABLE login_nutriologos (
-    login_nutriologo_id SERIAL PRIMARY KEY,
-    nutriologo_id INTEGER NOT NULL UNIQUE REFERENCES nutriologo(nutriologo_id) ON DELETE CASCADE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    verificado BOOLEAN NOT NULL DEFAULT FALSE
-);
-*/
-
-CREATE TABLE catalogo_grupos_alimentos (
-    grupo_alimento_id SERIAL PRIMARY KEY,
-    nombre_grupo VARCHAR(100) NOT NULL UNIQUE,
-    descripcion TEXT NULL
-);
-
-CREATE TABLE Alimentos (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
-    grupo_alimento_id INTEGER REFERENCES catalogo_grupos_alimentos(grupo_alimento_id),
-    cantidad_sugerida VARCHAR(50),
-    unidad VARCHAR(50),
-    peso_bruto DECIMAL(10,2),
-    peso_neto DECIMAL(10,2),
-    energia DECIMAL(10,2),
-    proteina DECIMAL(10,2),
-    hidratos_de_carbono DECIMAL(10,2),
-    ag_saturados DECIMAL(10,3),
-    ag_monoinsaturados DECIMAL(10,3),
-    ag_poliinsaturados DECIMAL(10,3),
-    colesterol DECIMAL(10,3),
-    azucar DECIMAL(10,2),
-    fibra DECIMAL(10,2),
-    vitamina_a DECIMAL(10,3),
-    acido_ascorbico DECIMAL(10,3),
-    calcio DECIMAL(10,3),
-    hierro DECIMAL(10,3),
-    potasio DECIMAL(10,3),
-    sodio DECIMAL(10,3),
-    fosforo DECIMAL(10,3),
-    etanol DECIMAL(10,2),
-    indice_glucemico DECIMAL(5,1) NULL,
-    carga_glicemica DECIMAL(5,1) NULL
+    notas_adicionales_habitos TEXT NULL
 );
 
 -- Inserciones de ejemplo para catálogos

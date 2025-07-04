@@ -1,6 +1,6 @@
 import reflex as rx
 #import NutriMatic.ui.nutri_home.components.patient_row as patient_row
-import NutriMatic.ui.components.header as header
+import NutriMatic.ui.core.header as header
 
 def nutri_home_view() -> rx.Component:
     """Vista para la página principal del nutriólogo."""
@@ -24,7 +24,8 @@ def nutri_home_view() -> rx.Component:
                         "Agregar Paciente",
                         size="3",
                         border_radius="10px",
-                        style={"cursor": "pointer", "color": "black"}
+                        style={"cursor": "pointer", "color": "black"},
+                        on_click=lambda: rx.redirect("/expediente-clinico")  # Redirige a la página de nuevo paciente
                     ),
                     justify="center",
                     spacing="9",
@@ -84,5 +85,5 @@ def nutri_home_view() -> rx.Component:
             margin_x="auto",    #  Centra el contenedor horizontalmente.
             width="65%",       
             max_width="90%", # Aumentado para hacerlo más grande.
-        ),
-    ),
+        )
+    )

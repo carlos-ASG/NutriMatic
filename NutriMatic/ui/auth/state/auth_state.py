@@ -2,6 +2,7 @@ from gotrue import User
 import reflex as rx
 from NutriMatic.data.respositories.auth_repository import AuthRepository
 from typing import Optional, Dict, Any
+from NutriMatic.data.respositories.nutriologo_repository import NutriologoRepository
 from NutriMatic.domain.models.nutriologo.nutriologo import Nutriologo
 
 # Obtenemos la configuración de rxconfig
@@ -11,6 +12,7 @@ class AuthState(rx.State):
     # No almacenes el objeto de sesión completo, ya que no es serializable.
     # En su lugar, almacena la información del usuario como un diccionario.
     user: dict | None = None
+    nutriologo: Optional[Nutriologo] = None  # Nutriologo asociado al usuario, si aplica
     
     # Inputs para los formularios
     nombre: str = ""
@@ -28,22 +30,6 @@ class AuthState(rx.State):
         self.apellido = ""
         self.error_message = ""
 
-    '''def on_load(self):
-        """
-        Este evento se ejecuta en cada carga de página.
-        Verifica la sesión del usuario a partir de las cookies.
-        """
-        # Obtenemos el token de la cookie que Supabase guarda en el navegador
-        token = self.router.page.cookies.get("sb-access-token")
-        if token:
-            try:
-                # Validamos el token y actualizamos la sesión en el estado del backend
-                self.session = self.supabase_client.auth.get_session()
-            except Exception:
-                # Si el token es inválido o expiró, reseteamos la sesión
-                self.session = None
-        else:
-            self.session = None'''
 
 
     @rx.var
@@ -63,17 +49,20 @@ class AuthState(rx.State):
                 response = await auth_repo.get_session()
                 if response and response.user:
                     self.user = response.user.model_dump()
+                    
                 else:
                     # La redirección debe ser un evento que se retorna
                     return rx.redirect("/login")
             except Exception:
                 return rx.redirect("/login")
 
+    @rx.event
     async def handle_login(self):
         """Maneja el inicio de sesión."""
         self.loading = True
         self.error_message = ""  # Clear previous errors
         auth_repo = AuthRepository()  # Instancia el repositorio aquí.
+        nutri_repo = NutriologoRepository()  # Instancia el repositorio de nutriologos aquí.
         try:
             response = await auth_repo.sign_in(
                 email=self.email,
@@ -84,6 +73,8 @@ class AuthState(rx.State):
             if response.session and response.session.user:
                 self.user = response.session.user.model_dump()
                 self._clear_fields_and_error()
+                nutriologo = nutri_repo.get_nutriologo_by_uuid(self.user['id'])
+                print(f"Nutriologo encontrado: {nutriologo}")
                 return rx.redirect("/nutri-home")
         except Exception as e:
             self.error_message = "Credenciales inválidas. Por favor, inténtalo de nuevo."
@@ -92,6 +83,7 @@ class AuthState(rx.State):
         finally:
             self.loading = False
 
+    @rx.event
     async def handle_signup(self):
         """
         Maneja el registro de un nuevo usuario.
@@ -129,7 +121,8 @@ class AuthState(rx.State):
             print(f"Error en signup: {e}")
         finally:
             self.loading = False
-        
+    
+    @rx.event
     async def handle_logout(self):
         """Maneja el cierre de sesión."""
         auth_repo = AuthRepository()  # Instancia el repositorio aquí.

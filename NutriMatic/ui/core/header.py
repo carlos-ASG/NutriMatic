@@ -39,5 +39,5 @@ def header() -> rx.Component:
             top="0px",
             background_color=" #40c6dc",
             z_index="9"            # Asegura que esté por encima de otro contenido. 
-    ),
+    )
     

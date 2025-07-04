@@ -15,8 +15,11 @@ app = rx.App()
 app.add_page(index)
 app.add_page(login_view, route="/login")
 app.add_page(signup_view, route="/signup")
-app.add_page(require_auth(nutri_home_view), route="/nutri-home", on_load=AuthState.check_auth) # type: ignore
-app.add_page(require_auth(expediente_clinico_view), route="/expediente-clinico", on_load=AuthState.check_auth) # type: ignore
+#app.add_page(require_auth(nutri_home_view), route="/nutri-home", on_load=AuthState.check_auth) # type: ignore
+#app.add_page(require_auth(expediente_clinico_view), route="/expediente-clinico", on_load=AuthState.check_auth) # type: ignore
+app.add_page(nutri_home_view, route="/nutri-home") # type: ignore
+app.add_page(expediente_clinico_view, route="/expediente-clinico") # type: ignore
+
 
 
 

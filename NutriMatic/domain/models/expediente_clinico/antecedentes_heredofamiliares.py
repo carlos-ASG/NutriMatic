@@ -2,6 +2,7 @@ import reflex as rx
 from sqlmodel import Field
 from datetime import date
 from typing import Optional
+from uuid import UUID
 
 class AntecedenteHeredoFamiliar(rx.Model, table=True):
     """
@@ -9,7 +10,7 @@ class AntecedenteHeredoFamiliar(rx.Model, table=True):
     Corresponde a la tabla 'paciente_antecedentes_familiares'.
     """
     pac_ant_fam_id: Optional[int] = Field(default=None, primary_key=True)
-    paciente_id: int  # FK a pacientes.paciente_id
+    paciente_id: UUID = Field(foreign_key="paciente.paciente_id")
     condicion_id: int  # FK a catalogo_condiciones_medicas.condicion_id
     parentesco_id: int  # FK a catalogo_parentescos.parentesco_id
     comentarios: Optional[str] = None

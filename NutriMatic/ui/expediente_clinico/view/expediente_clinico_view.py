@@ -1,6 +1,8 @@
 import reflex as rx
-from NutriMatic.ui.components.header import header
+from NutriMatic.ui.core.header import header
 from NutriMatic.ui.expediente_clinico.components.ficha_identificacion import ficha_identificacion
+from NutriMatic.ui.expediente_clinico.state.expediente_clinico_state import ExpedienteClinicoState
+
 
 def expediente_clinico_view() -> rx.Component:
     """Vista para el expediente clínico del paciente."""
@@ -21,6 +23,10 @@ def expediente_clinico_view() -> rx.Component:
                 rx.box(
                     rx.container(
                         ficha_identificacion(),
+                        rx.button(
+                            "Guardar Cambios",
+                            on_click=ExpedienteClinicoState.handle_submit, # type: ignore
+                            ),
                         width="100%",
                         padding="1rem",
                         background_color="#f8f9fa",

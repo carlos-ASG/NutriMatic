@@ -1,6 +1,7 @@
 import reflex as rx
 from typing import Dict, Any, Optional, List
 from sqlmodel import select
+from uuid import UUID
 
 from NutriMatic.domain.models.expediente_clinico.paciente import Paciente
 from NutriMatic.domain.models.expediente_clinico.antecedentes_patologicos import AntecedentePersonalPatologico
@@ -37,7 +38,7 @@ class ExpedienteClinicoRepository:
             paciente_id = paciente.paciente_id
 
             # 2. Crear instancias de todos los modelos relacionados con el ID del paciente
-            modelos_a_crear = [
+            ''' modelos_a_crear = [
                 AntecedentePersonalPatologico(paciente_id=paciente_id, transfusiones=None),
                 AntecedenteNoPatologico(paciente_id=paciente_id),
                 AntecedenteGinecoObstetrico(paciente_id=paciente_id),
@@ -49,14 +50,14 @@ class ExpedienteClinicoRepository:
                 Recordatorio24h(paciente_id=paciente_id),
                 # Los modelos con registros múltiples (como antecedentes heredofamiliares)
                 # se añadirán por separado cuando se tenga la información.
-            ]
+            ]'''
             
-            session.add_all(modelos_a_crear)
-            session.commit()
+            #session.add_all(modelos_a_crear)
+            #session.commit()
             
             return paciente
 
-    def get_expediente_by_paciente_id(self, paciente_id: int) -> Optional[Dict[str, Any]]:
+    def get_expediente_by_paciente_id(self, paciente_id: UUID) -> Optional[Dict[str, Any]]:
         """
         Obtiene el expediente completo de un paciente por su ID.
         """
